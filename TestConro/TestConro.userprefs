@@ -1,0 +1,26 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Create/DoorComponent.cs">
+    <Files>
+      <File FileName="Assets/TK2DROOT/tk2d/Code/Sprites/tk2dSpriteAnimation.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/CreateLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/Player.cs" Line="214" Column="48" />
+      <File FileName="Assets/Create/GameLoop.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/LevelResManager.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/CreateLogicEditor.cs" Line="1" Column="1" />
+      <File FileName="Assets/TK2DROOT/tk2d/Code/Sprites/tk2dSprite.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/CameraComponent.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/DoorComponent.cs" Line="90" Column="1" />
+      <File FileName="Assets/TK2DROOT/tk2d/Code/Sprites/tk2dSpriteAnimator.cs" Line="179" Column="18" />
+      <File FileName="Assets/Resources/Animation/PlayerWeaponMotionComponent.cs" Line="22" Column="36" />
+      <File FileName="Assets/Create/LevelLogic.cs" Line="1" Column="1" />
+      <File FileName="Assets/Create/StageLogic.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/liuzhenting/Codes/TestConro/TestConro/Assets/Create/DoorComponent.cs" line="35" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
