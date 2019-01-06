@@ -12,10 +12,21 @@ public class CreateLogic : MonoBehaviour {
 	public tk2dSprite spritetest ;
 	private const string prefabPath="Assets/Resources/Stages/";
 	public int level=1;
+    public int scene = 1;
 	private StageLogic Stage; 
 	private GameObject Edge;
 
-	public void CreateStage()
+    public string GetSpriteName()
+    {
+        return "crate";
+    }
+
+    public string GetBGSpriteName()
+    {
+        return "bg";
+    }
+
+    public void CreateStage()
 	{
 		GameObject obj = new GameObject ();
 		obj.transform.parent = null;
@@ -26,12 +37,33 @@ public class CreateLogic : MonoBehaviour {
 		CreateRight (xlenth, ylenth, 1);
 		CreateTop (xlenth, ylenth, 1);
 		CreateBottom (xlenth, ylenth, 1);
-		CreateBackGround (xlenth, ylenth, 1,"bg",Stage.transform);
+		CreateBackGround (xlenth, ylenth, 1, GetBGSpriteName(), Stage.transform);
+        Stage.dynamicRoot=CreateDynamicRoot();
+        Stage.staticRoot = CreateStaticRoot();
 		Stage.OpenAllDoor ();
 		Stage.xLength = xlenth;
 		Stage.yLength = ylenth;
 	
 	}
+
+    public void FreshStage()
+    {
+        ArrayList deletes = new ArrayList();
+        for(int i=0;i<Stage.transform.childCount;i++)
+        {
+            deletes.Add(Stage.transform.GetChild(i));
+        }
+        for(int i=0;i< deletes.Count;i++)
+        {
+            GameObject.DestroyImmediate(((GameObject)deletes[i]).gameObject);
+
+        }
+        CreateLeft(xlenth, ylenth, 1);
+        CreateRight(xlenth, ylenth, 1);
+        CreateTop(xlenth, ylenth, 1);
+        CreateBottom(xlenth, ylenth, 1);
+        CreateBackGround(xlenth, ylenth, 1, GetBGSpriteName(), Stage.transform);
+    }
 
 	public void SaveStage()
 	{
@@ -63,13 +95,13 @@ public class CreateLogic : MonoBehaviour {
 		for (int i = xreal*-1; i <= xreal; i++) {
 			float px = hreal*i;
 			float py = hreal*-1.5f;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",Edge.transform,10,false);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), Edge.transform,10,false);
 		}
 
 		for (int i = xreal*-1; i <= xreal; i++) {
 			float px = hreal*i;
 			float py = hreal*1.5f;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",Edge.transform,10,false);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), Edge.transform,10,false);
 		}
 	}
 
@@ -85,12 +117,12 @@ public class CreateLogic : MonoBehaviour {
 		for (int i = 1; i < y - 1; i++) {
 			float px = hreal * -1f;
 			float py = 0.5f * hreal + i * hreal-y/2*hreal;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",Edge.transform,10,false);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), Edge.transform,10,false);
 		}
 		for (int i = 1; i < y - 1; i++) {
 			float px = hreal * 1f;
 			float py = 0.5f * hreal + i * hreal-y/2*hreal;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",Edge.transform,10,false);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), Edge.transform,10,false);
 		}
 	}
 
@@ -134,6 +166,11 @@ public class CreateLogic : MonoBehaviour {
 		return obj;
 	}
 
+    public void ApplyItemSprite(GameObject obj,string spritename)
+    {
+        obj.GetComponent<tk2dSprite>().SetSprite(spritetest.Collection, spritename);
+    }
+
 	public void CreateLeft(int x,int y,float h)
 	{
 		GameObject obj = new GameObject ();
@@ -150,7 +187,7 @@ public class CreateLogic : MonoBehaviour {
 		for (int i = 1; i < y - 1; i++) {
 			float px = (x /2)*hreal * -1f;
 			float py = 0.5f * hreal + i * hreal-centeroffset;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",obj.transform);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), obj.transform);
 			if (i == 1 || i==2) {
 				door.mWallObjects.Add (wall);
 
@@ -175,7 +212,7 @@ public class CreateLogic : MonoBehaviour {
 		for (int i = 1; i < y - 1; i++) {
 			float px = (x /2)*hreal * 1f;
 			float py = 0.5f * hreal + i * hreal-centeroffset;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",obj.transform);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), obj.transform);
 			if (i == 1 || i==2) {
 				door.mWallObjects.Add (wall);
 
@@ -191,21 +228,21 @@ public class CreateLogic : MonoBehaviour {
 		obj.transform.parent = Stage.gameObject.transform;
 		obj.name = "top";
 
-		DoorComponent door = CreateDoor (eDoorType.Top,new Vector3(2*hreal,hreal*0.1f));
-		door.transform.parent = obj.transform;
+		//DoorComponent door = CreateDoor (eDoorType.Top,new Vector3(2*hreal,hreal*0.1f));
+		//door.transform.parent = obj.transform;
 
-		door.transform.localPosition = new Vector3 (0,(y-3.5f)*hreal-centeroffset,0);
-		door.mWallObjects = new System.Collections.Generic.List<GameObject> ();
-		Stage.topDoor = door;
+		//door.transform.localPosition = new Vector3 (0,(y-3.5f)*hreal-centeroffset,0);
+		//door.mWallObjects = new System.Collections.Generic.List<GameObject> ();
+		//Stage.topDoor = door;
 		int xreal = x / 2;
 		for (int i = xreal*-1; i <= xreal; i++) {
 			float px = hreal*i;
 			float py = (y-1)*hreal+hreal*0.5f-centeroffset;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",obj.transform);
-			if (i == 0) {
-				door.mWallObjects.Add (wall);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), obj.transform);
+			//if (i == 0) {
+			//	door.mWallObjects.Add (wall);
 
-			}
+			//}
 		}
 	}
 
@@ -216,23 +253,23 @@ public class CreateLogic : MonoBehaviour {
 		obj.transform.parent = Stage.gameObject.transform;
 		obj.name = "bottom";
 
-		DoorComponent door = CreateDoor (eDoorType.Bottom,new Vector3(2*hreal,hreal*0.1f));
-		door.transform.parent = obj.transform;
+		//DoorComponent door = CreateDoor (eDoorType.Bottom,new Vector3(2*hreal,hreal*0.1f));
+		//door.transform.parent = obj.transform;
 
-		door.transform.localPosition = new Vector3 (0,hreal*1.5f-centeroffset,0);
-		door.mWallObjects = new System.Collections.Generic.List<GameObject> ();
+		//door.transform.localPosition = new Vector3 (0,hreal*1.5f-centeroffset,0);
+		//door.mWallObjects = new System.Collections.Generic.List<GameObject> ();
 
-		Stage.bottomDoor = door;
+		//Stage.bottomDoor = door;
 
 		int xreal = x / 2;
 		for (int i = xreal*-1; i <= xreal; i++) {
 			float px = hreal*i;
 			float py = hreal*0.5f-centeroffset;
-			GameObject wall=CreateItem (new Vector3(px,py,0f),h,"crate",obj.transform);
-			if (i == 0) {
-				door.mWallObjects.Add (wall);
+			GameObject wall=CreateItem (new Vector3(px,py,0f),h, GetSpriteName(), obj.transform);
+			//if (i == 0) {
+			//	door.mWallObjects.Add (wall);
 
-			}
+			//}
 		}
 			
 	}
@@ -265,4 +302,41 @@ public class CreateLogic : MonoBehaviour {
 		door.mDoorType = type;
 		return door;
 	}
+
+    public Transform CreateDynamicRoot()
+    {
+        GameObject obj = new GameObject();
+        obj.name = "DynamicRoot";
+
+        return obj.transform;
+    }
+
+    public Transform CreateStaticRoot()
+    {
+        GameObject obj = new GameObject();
+        obj.name = "StaticRoot";
+
+        return obj.transform;
+    }
+
+
+    public void AddDynamicObject(int id)
+    {
+        GameObject obj = new GameObject();
+        obj.name = id.ToString();
+        obj.AddComponent<DynamicActorComponent>();
+        obj.transform.parent = Stage.dynamicRoot;
+    }
+
+    public void AddStaticObject(GameObject target)
+    {
+        GameObject staticobject = Instantiate(target);
+        staticobject.transform.parent = Stage.staticRoot;
+    }
+
+    
+    public void TestStage()
+    {
+
+    }
 }

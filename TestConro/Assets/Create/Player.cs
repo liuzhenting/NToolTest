@@ -140,20 +140,20 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	public void OnDownLadder()
-	{
-		if(GameLoop.Instance.level.currentStage.bottomDoor.DoorCloseState)
-		{
-			return;
-		}
-		float dist=Vector3.Distance(transform.position,GameLoop.Instance.level.currentStage.bottomDoor.transform.position);
-		if (dist < LevelManager.h2*0.3f) {
-			if (mType == eLocationType.stage) {
-				SetMoveType (eLocationType.ladder);
-				transform.position = GameLoop.Instance.level.currentStage.bottomDoor.transform.position;
-			}
-		}
-	}
+	//public void OnDownLadder()
+	//{
+	//	if(GameLoop.Instance.level.currentStage.bottomDoor.DoorCloseState)
+	//	{
+	//		return;
+	//	}
+	//	float dist=Vector3.Distance(transform.position,GameLoop.Instance.level.currentStage.bottomDoor.transform.position);
+	//	if (dist < LevelManager.h2*0.3f) {
+	//		if (mType == eLocationType.stage) {
+	//			SetMoveType (eLocationType.ladder);
+	//			transform.position = GameLoop.Instance.level.currentStage.bottomDoor.transform.position;
+	//		}
+	//	}
+	//}
 
 	public void OnJoystick(float XAxis,float yAxis)
 	{
@@ -201,55 +201,34 @@ public class Player : MonoBehaviour {
 		}
 	}
 
-	/// <summary>
-	/// 触碰到门
-	/// </summary>
-	/// <param name="door">Door.</param>
-	public void OnEnterDoorTrigger( DoorComponent door)
-	{
-		if (mType == eLocationType.corridor || mType == eLocationType.ladder) {
-			//in logic
-			SetMoveType(eLocationType.stage);
-			GameLoop.Instance.level.currentStage = door.transform.parent.parent.GetComponent<StageLogic> ();
-			transform.position = door.transform.position;
-		} else {
-			//out logic
-			if (door.mDoorType == eDoorType.Bottom) {
-				//SetMoveType (eLocationType.ladder);
-			}
-			else if(door.mDoorType == eDoorType.Top)
-			{
-				transform.position = door.transform.position;
-				SetMoveType (eLocationType.ladder);
-			}
-			else {
-				SetMoveType(eLocationType.corridor);
-			}
-		}
-	}
+	///// <summary>
+	///// 触碰到门
+	///// </summary>
+	///// <param name="door">Door.</param>
+	//public void OnEnterDoorTrigger( DoorComponent door)
+	//{
+	//	if (mType == eLocationType.corridor || mType == eLocationType.ladder) {
+	//		//in logic
+	//		SetMoveType(eLocationType.stage);
+	//		GameLoop.Instance.level.currentStage = door.transform.parent.parent.GetComponent<StageLogic> ();
+	//		transform.position = door.transform.position;
+	//	} else {
+	//		//out logic
+	//		SetMoveType(eLocationType.corridor);
+	//	}
+	//}
 
-	public void OnExitDoorTrigger( DoorComponent door)
+	public void OnExitDoorTrigger( int StageId,bool toIn)
 	{
-		if (mType == eLocationType.corridor || mType == eLocationType.ladder) {
-			//in logic
-			SetMoveType(eLocationType.stage);
-			GameLoop.Instance.level.currentStage = door.transform.parent.parent.GetComponent<StageLogic> ();
-			transform.position = door.transform.position;
-		} else {
-			//out logic
-			if (door.mDoorType == eDoorType.Bottom) {
-				//SetMoveType (eLocationType.ladder);
-			}
-			else if(door.mDoorType == eDoorType.Top)
-			{
-				transform.position = door.transform.position;
-				SetMoveType (eLocationType.ladder);
-			}
-			else {
-				SetMoveType(eLocationType.corridor);
-			}
-		}
-	}
+        if(toIn)//进来
+        {
+
+        }
+        else//出去
+        {
+            SetMoveType(eLocationType.corridor);
+        }
+    }
 
 	public void OnHitTargetHeadTrigger()
 	{

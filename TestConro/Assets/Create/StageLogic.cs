@@ -5,23 +5,24 @@ public class StageLogic : MonoBehaviour {
 
 	public DoorComponent leftDoor;
 	public DoorComponent rightDoor;
-	public DoorComponent topDoor;
-	public DoorComponent bottomDoor;
+    public Transform dynamicRoot;
+    public Transform staticRoot;
 	public bool clear = false;
 	public int xLength;
 	public int yLength;
 	public eNodeType type;
-	public void InitDoorState(LevelNode node)
+    public int stageId;
+	public void InitDoorState(LevelNode node,int stageId)
 	{
-		leftDoor.SetDoorState (node.left);
+        leftDoor.mStageId = stageId;
+        rightDoor.mStageId = stageId;
+        leftDoor.SetDoorState (node.left);
 		rightDoor.SetDoorState (node.right);
-		topDoor.SetDoorState (node.top);
-		bottomDoor.SetDoorState (node.bottom);
 		type = node.type;
+        this.stageId = stageId;
+    }
 
-	}
-
-	public void OnPlayerEnterStage()
+	public void OnEnter()
 	{
 		if (clear) {
 			return;
@@ -30,12 +31,15 @@ public class StageLogic : MonoBehaviour {
 		}
 	}
 
-	public void OpenAllDoor()
+    public void OnExit()
+    {
+
+    }
+
+    public void OpenAllDoor()
 	{
 		leftDoor.OpenDoor ();
 		rightDoor.OpenDoor ();
-		topDoor.OpenDoor ();
-		bottomDoor.OpenDoor ();
 	}
 
 	public void OpenAllEnableDoor()
@@ -44,17 +48,11 @@ public class StageLogic : MonoBehaviour {
 			leftDoor.OpenDoor ();
 		if (!rightDoor.DoorDiableState)
 			rightDoor.OpenDoor ();
-		if (!topDoor.DoorDiableState)
-			topDoor.OpenDoor ();
-		if (!bottomDoor.DoorDiableState)
-			bottomDoor.OpenDoor ();
 	}
 
 	public void CloseAllDoor()
 	{
 		leftDoor.CloseDoor ();
 		rightDoor.CloseDoor ();
-		topDoor.CloseDoor ();
-		bottomDoor.CloseDoor ();
 	}
 }

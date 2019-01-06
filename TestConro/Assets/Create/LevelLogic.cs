@@ -58,7 +58,25 @@ public class LevelNode
 		}
 	}
 
-	public List<int> GetAround()
+     /// <summary>
+     /// jinjin shuiping Y=0
+     /// </summary>
+    public int Index2
+    {
+        get
+        {
+            return xIndex;
+
+        }
+        set
+        {
+            yIndex = 0;
+            xIndex = Index2;
+            pos = GetPosition(LevelManager.width, LevelManager.heigh);
+        }
+    }
+
+    public List<int> GetAround()
 	{
 		List<int> arounds=new List<int>();
 		if(xIndex + 1>=0&&xIndex + 1<4)arounds.Add(yIndex * 4 + xIndex + 1);
@@ -194,6 +212,8 @@ public class LevelManager
 		}
 	}
 
+
+
 	public void CreateNextLevelNode(LevelNode last)
 	{
 		List<int> arounds = last.GetAround ();
@@ -277,7 +297,48 @@ public class LevelManager
 		return null;
 	}
 
-	public void Print()
+    /// <summary>
+    /// 创建一个水平的level
+    /// </summary>
+    public void CreateLevel2()
+    {
+        step = Random.Range(4, 6);
+        first = 0;
+        LevelNode tmp = new LevelNode();
+        tmp.Index2 = first;
+        tmp.left = false;
+        tmp.right = true;
+        tmp.type = eNodeType.Start;
+        levelNodes.Add(tmp);
+
+        for (int i=1;i<step;i++)
+        {
+            LevelNode node = new LevelNode();
+            node.Index2 = i;
+            if(i==step-1)
+            {
+                tmp.left = true;
+                tmp.right = false;
+                node.type = eNodeType.End;
+            }
+            else
+            {
+                tmp.left = true;
+                tmp.right = true;
+                node.type = eNodeType.Normal;
+            }
+            levelNodes.Add(node);
+
+            LevelEdge edge = new LevelEdge(node, tmp);
+            tmp = node;
+            levelEdges.Add(edge);
+        }
+
+        Init();
+        CreateLevel();
+    }
+
+    public void Print()
 	{
 		string str = "";
 		for (int i = 0; i < levelNodes.Count; i++) {
@@ -305,7 +366,7 @@ public class EdgeInstance
 public class StageInstance
 {
 	public StageLogic stageEntity;
-	public void Load(LevelNode levelNode,int levelId)
+	public void Load(LevelNode levelNode,int levelId,int stageId)
 	{
 		stageEntity=LevelResManager.Instance.GetStage (levelId,levelNode.type);
 		stageEntity.gameObject.transform.position = levelNode.GetPosition (LevelManager.width,LevelManager.heigh);
@@ -321,7 +382,7 @@ public class StageInstance
 		if (levelNode.type == eNodeType.Normal) {
 			stageEntity.gameObject.name="normal";
 		}
-		stageEntity.InitDoorState (levelNode);
+		stageEntity.InitDoorState (levelNode, stageId);
 		stageEntity.OpenAllEnableDoor ();
 	}
 
@@ -354,11 +415,12 @@ public class LevelLogic : MonoBehaviour {
 		stageList = new List<StageInstance> ();
 		edgeList = new List<EdgeInstance> ();
 		levelManager.Init ();
-		levelManager.CreateLevel ();
+        //levelManager.CreateLevel();
+        levelManager.CreateLevel2 ();
 		List<LevelNode> nodes=levelManager.LevelNodes;
 		for (int i = 0; i < nodes.Count; i++) {
 			StageInstance stage=new StageInstance ();
-			stage.Load (nodes[i],1);
+			stage.Load (nodes[i],1, i);
 			stageList.Add (stage);
 		}
 
@@ -368,8 +430,22 @@ public class LevelLogic : MonoBehaviour {
 			edge.Load (edges[i],1);
 			edgeList.Add (edge);
 		}
-		currentStage = stageList [0].stageEntity;
-	}
+        EnterState(0);
+
+    }
+
+     /// <summary>
+     /// 地图编辑器测试运行使用
+     /// </summary>
+     /// <param name="target"></param>
+    public void PlaceOneStageForTest(StageLogic target)
+    {
+        stageList = new List<StageInstance>();
+        edgeList = new List<EdgeInstance>();
+        StageInstance stage = new StageInstance();
+        stage.stageEntity = target;
+        EnterState(0);
+    }
 
 	public void UnLoadLevel()
 	{
@@ -399,4 +475,19 @@ public class LevelLogic : MonoBehaviour {
 		}
 		return Vector3.zero;
 	}
+
+    public void EnterState(int stageId)
+    {
+        currentStage = stageList[stageId].stageEntity;
+        currentStage.OnEnter();
+    }
+
+    public void ExitState(int stageId)
+    {
+        if(currentStage!=null)
+        {
+            currentStage.OnExit();
+        }
+        currentStage = null;
+    }
 }

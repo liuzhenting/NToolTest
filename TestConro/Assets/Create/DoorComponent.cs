@@ -5,9 +5,7 @@ using System.Collections.Generic;
 public enum eDoorType
 {
 	Left,
-	Right,
-	Top,
-	Bottom
+	Right
 }
 
 public class DoorComponent : MonoBehaviour {
@@ -15,6 +13,7 @@ public class DoorComponent : MonoBehaviour {
 	public List<GameObject> mWallObjects;
 	public List<GameObject> mDoorObjects;
 	public eDoorType mDoorType;
+    public int mStageId;
 	private bool mDoorCloseState;
 	private bool mDoorDiableState=false;
 	public bool DoorDiableState
@@ -87,7 +86,7 @@ public class DoorComponent : MonoBehaviour {
 		if (mDoorCloseState) {//now is inbattle
 			return;
 		}
-		GameLoop.Instance.player.OnEnterDoorTrigger (this);
+		//GameLoop.Instance.player.OnEnterDoorTrigger (this);
 	}
 
 	public void OnTriggerExit()
@@ -98,7 +97,33 @@ public class DoorComponent : MonoBehaviour {
 		if (mDoorCloseState) {
 			return;
 		}
-		//GameLoop.Instance.player.OnExitDoorTrigger (this);
-	}
+
+        Player player = GameLoop.Instance.player;
+        GameObject obj= player.gameObject;
+        bool ret = false;
+        if(mDoorType==eDoorType.Left)
+        {
+            if ((gameObject.transform.position - obj.transform.position).x < 0)
+            {
+                ret=false;
+            }
+            else
+            {
+                ret = true ;
+            }
+        }
+        else
+        {
+            if ((gameObject.transform.position - obj.transform.position).x < 0)
+            {
+                ret = true;
+            }
+            else
+            {
+                ret = false;
+            }
+        }
+        player.OnExitDoorTrigger(mStageId, ret);
+    }
 		
 }
