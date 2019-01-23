@@ -71,7 +71,7 @@ public class LevelNode
         set
         {
             yIndex = 0;
-            xIndex = Index2;
+            xIndex = value;
             pos = GetPosition(LevelManager.width, LevelManager.heigh);
         }
     }
@@ -304,38 +304,39 @@ public class LevelManager
     {
         step = Random.Range(4, 6);
         first = 0;
-        LevelNode tmp = new LevelNode();
-        tmp.Index2 = first;
-        tmp.left = false;
-        tmp.right = true;
-        tmp.type = eNodeType.Start;
-        levelNodes.Add(tmp);
+        LevelNode start = new LevelNode();
+		start.Index2 = first;
+		start.left = false;
+		start.right = true;
+		start.type = eNodeType.Start;
+		levelNodes.Add(start);
 
+		LevelNode tmp = start;
         for (int i=1;i<step;i++)
         {
             LevelNode node = new LevelNode();
             node.Index2 = i;
             if(i==step-1)
             {
-                tmp.left = true;
-                tmp.right = false;
+				node.left = true;
+				node.right = false;
                 node.type = eNodeType.End;
             }
             else
             {
-                tmp.left = true;
-                tmp.right = true;
+				node.left = true;
+				node.right = true;
                 node.type = eNodeType.Normal;
             }
             levelNodes.Add(node);
 
-            LevelEdge edge = new LevelEdge(node, tmp);
+			LevelEdge edge = new LevelEdge(node, tmp);
             tmp = node;
             levelEdges.Add(edge);
         }
 
-        Init();
-        CreateLevel();
+        //Init();
+        //CreateLevel();
     }
 
     public void Print()
@@ -350,26 +351,39 @@ public class LevelManager
 
 public class EdgeInstance
 {
-	public GameObject gameObject;
-	public void Load(LevelEdge levelEdge,int levelId)
+	public EdgeLogic edge;
+	public Vector3 Load(LevelEdge levelEdge,int levelId,Vector3 startpos)
 	{
-		gameObject=LevelResManager.Instance.GetEdge (levelId,levelEdge.edgeType);
-		gameObject.transform.position = levelEdge.GetPosition (LevelManager.h1,LevelManager.h2);
+		edge=LevelResManager.Instance.GetEdge (levelId,levelEdge.edgeType);
+		//edge.transform.position = levelEdge.GetPosition (LevelManager.h1,LevelManager.h2);
+
+		Vector3 local = startpos;
+		local.x=local.x+edge.getXSize()*0.5f;
+		local.y=local.y+edge.getYSize()*0.5f;
+		edge.gameObject.transform.position =local;
+		startpos.x = startpos.x+edge.getXSize();
+
+		return startpos;
 	}
 
 	public void UnLoad()
 	{
-		GameObject.Destroy (gameObject);
+		GameObject.Destroy (edge.gameObject);
+		edge = null;
 	}
 }
 
 public class StageInstance
 {
 	public StageLogic stageEntity;
-	public void Load(LevelNode levelNode,int levelId,int stageId)
+	public Vector3 Load(LevelNode levelNode,int levelId,int stageId,Vector3 startpos)
 	{
 		stageEntity=LevelResManager.Instance.GetStage (levelId,levelNode.type);
-		stageEntity.gameObject.transform.position = levelNode.GetPosition (LevelManager.width,LevelManager.heigh);
+		//stageEntity.gameObject.transform.position = levelNode.GetPosition (LevelManager.width,LevelManager.heigh);
+		Vector3 local = startpos;
+		local.x=local.x+stageEntity.getXSize()*0.5f;
+		local.y=local.y+stageEntity.getYSize()*0.5f;
+		stageEntity.gameObject.transform.position =local;
 		if (levelNode.type == eNodeType.Start) {
 			stageEntity.gameObject.name="start";
 		}
@@ -384,6 +398,10 @@ public class StageInstance
 		}
 		stageEntity.InitDoorState (levelNode, stageId);
 		stageEntity.OpenAllEnableDoor ();
+
+		startpos.x = startpos.x+stageEntity.getXSize();
+
+		return startpos;
 	}
 
 	public void UnLoad()
@@ -417,19 +435,28 @@ public class LevelLogic : MonoBehaviour {
 		levelManager.Init ();
         //levelManager.CreateLevel();
         levelManager.CreateLevel2 ();
+		Vector3 startpos = new Vector3 (0,0,0);
 		List<LevelNode> nodes=levelManager.LevelNodes;
+		List<LevelEdge> edges=levelManager.LevelEdges;
+
 		for (int i = 0; i < nodes.Count; i++) {
 			StageInstance stage=new StageInstance ();
-			stage.Load (nodes[i],1, i);
+			startpos=stage.Load (nodes[i],1, i,startpos);
 			stageList.Add (stage);
+
+			if (i != nodes.Count - 1) {
+				EdgeInstance edge=new EdgeInstance ();
+				startpos=edge.Load (edges[i],1,startpos);
+				edgeList.Add (edge);
+			}
 		}
 
-		List<LevelEdge> edges=levelManager.LevelEdges;
+		/*List<LevelEdge> edges=levelManager.LevelEdges;
 		for (int i = 0; i < edges.Count; i++) {
 			EdgeInstance edge=new EdgeInstance ();
-			edge.Load (edges[i],1);
+			startpos=edge.Load (edges[i],1,startpos);
 			edgeList.Add (edge);
-		}
+		}*/
         EnterState(0);
 
     }
@@ -463,7 +490,7 @@ public class LevelLogic : MonoBehaviour {
 	public Vector3 GetStartPos()
 	{
 		Vector3 pos= stageList [0].stageEntity.transform.position;
-		pos = new Vector3 (pos.x-1,pos.y-4*0.6f,0);
+		pos = new Vector3 (pos.x-3,pos.y-4*0.6f,0);
 		return pos;
 	}
 

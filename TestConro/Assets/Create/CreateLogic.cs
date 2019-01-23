@@ -43,6 +43,7 @@ public class CreateLogic : MonoBehaviour {
 		Stage.OpenAllDoor ();
 		Stage.xLength = xlenth;
 		Stage.yLength = ylenth;
+		Stage.rato = rato;
 	
 	}
 
@@ -88,9 +89,12 @@ public class CreateLogic : MonoBehaviour {
 		Edge = new GameObject ();
 		Edge.transform.parent = null;
 		Edge.name="hEdge";
-
+		EdgeLogic edgecomp=Edge.AddComponent<EdgeLogic> ();
+		edgecomp.xLength = 30;
+		edgecomp.yLength = 3;
+		edgecomp.rato = rato;
 		float h = 1;
-		int xreal = 30 / 2;
+		int xreal = edgecomp.xLength / 2;
 		float hreal = h  * rato;
 		for (int i = xreal*-1; i <= xreal; i++) {
 			float px = hreal*i;
@@ -281,6 +285,7 @@ public class CreateLogic : MonoBehaviour {
 		float height = hreal * y;
 
 		GameObject obj = new GameObject ();
+		obj.name = "BG";
 		obj.transform.parent = parent;
 		tk2dSprite sprite=obj.AddComponent<tk2dSprite> ();
 		sprite.SetSprite (spritetest.Collection,spritename);
@@ -307,7 +312,7 @@ public class CreateLogic : MonoBehaviour {
     {
         GameObject obj = new GameObject();
         obj.name = "DynamicRoot";
-
+		obj.transform.parent = Stage.gameObject.transform;
         return obj.transform;
     }
 
@@ -315,7 +320,7 @@ public class CreateLogic : MonoBehaviour {
     {
         GameObject obj = new GameObject();
         obj.name = "StaticRoot";
-
+		obj.transform.parent = Stage.gameObject.transform;
         return obj.transform;
     }
 

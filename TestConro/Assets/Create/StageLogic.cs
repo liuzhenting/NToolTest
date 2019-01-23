@@ -10,8 +10,19 @@ public class StageLogic : MonoBehaviour {
 	public bool clear = false;
 	public int xLength;
 	public int yLength;
+	public float rato;
 	public eNodeType type;
     public int stageId;
+
+	public float getXSize()
+	{
+		return rato * xLength;
+	}
+
+	public float getYSize()
+	{
+		return rato * yLength;
+	}
 	public void InitDoorState(LevelNode node,int stageId)
 	{
         leftDoor.mStageId = stageId;

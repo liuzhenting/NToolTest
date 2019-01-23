@@ -19,10 +19,10 @@ public class CreateLogicEditor :  Editor {
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Base Info");
-		createLogic.rato = EditorGUILayout.FloatField("Rato", createLogic.rato);
-		createLogic.centeroffset = EditorGUILayout.FloatField("createLogic", createLogic.centeroffset);
-		createLogic.xlenth = EditorGUILayout.IntField("xlenth", createLogic.xlenth);
-		createLogic.ylenth = EditorGUILayout.IntField("ylenth", createLogic.ylenth);
+		createLogic.rato = EditorGUILayout.FloatField("Rato", createLogic.rato);//每个块的长度（米）
+		createLogic.centeroffset = EditorGUILayout.FloatField("centeroffset", createLogic.centeroffset);
+		createLogic.xlenth = EditorGUILayout.IntField("xlenth", createLogic.xlenth);//长度多少个块
+		createLogic.ylenth = EditorGUILayout.IntField("ylenth", createLogic.ylenth);//高度多少个块
 		createLogic.type = EditorGUILayout.TextField("type", createLogic.type);
 		createLogic.stageName = EditorGUILayout.TextField("stageName", createLogic.stageName);
 		createLogic.level = EditorGUILayout.IntField("level", createLogic.level);
@@ -53,9 +53,9 @@ public class CreateLogicEditor :  Editor {
 			createLogic.CreateHEdge ();
 		}
 
-		if(GUILayout.Button("CreateVEdge")){
-			createLogic.CreateVEdge ();
-		}
+		//if(GUILayout.Button("CreateVEdge")){
+		//	createLogic.CreateVEdge ();
+		//}
 		EditorGUILayout.Space();
 		EditorGUILayout.Space();
 		if(GUILayout.Button("SaveEdge")){
@@ -106,6 +106,10 @@ public class CreateLogicEditor :  Editor {
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("StaticObject");
         string LevelStaticPath = "Static_" + createLogic.scene;
+
+		if (staticPrefabs == null) {
+			staticPrefabs= new ArrayList();
+		}
         if (GUILayout.Button("FreshStaticPrefab"))
         {
             staticPrefabs= new ArrayList();

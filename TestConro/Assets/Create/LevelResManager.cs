@@ -57,14 +57,14 @@ public class LevelResManager : MonoBehaviour {
 		}
 	}
 
-	public GameObject GetEdge(int levelId,eEdgeType type)
+	public EdgeLogic GetEdge(int levelId,eEdgeType type)
 	{
 		if (type == eEdgeType.Horizon) {
-			return GameObject.Instantiate (hEdge);
+			return GameObject.Instantiate (hEdge).GetComponent<EdgeLogic>();
 		}
 
 		if (type == eEdgeType.Vetical) {
-			return GameObject.Instantiate (vEdge);
+			return GameObject.Instantiate (vEdge).GetComponent<EdgeLogic>();
 		}
 
 		return null;
